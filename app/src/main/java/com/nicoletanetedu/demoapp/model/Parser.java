@@ -21,15 +21,12 @@ public class Parser {
     private static List<Stargazers>stargazers = null;
 
     private static List<Listener<Repository>> repoListener = new ArrayList<>();
-    private static List<Listener<Forks>> forksListener = new ArrayList<>();
-    private static List<Listener<Forks>> stargazersListener = new ArrayList<>();
 
     public static void getRepos(final Listener<Repository>listener){
-        Call<List<Repository>> call = MainApplication.getApiInterface().getRepositories(20,"token fe90f925ed7ab0254e9c767e8406139a83b3d3aa");
+        Call<List<Repository>> call = MainApplication.getApiInterface().getRepositories(20,"token OAUTH_TOKEN" );
         call.enqueue(new Callback<List<Repository>>() {
             @Override
             public void onResponse(Call<List<Repository>> call, Response<List<Repository>> response) {
-                Log.e("RESP", response.body() + " ");
                 List<Repository> models = new ArrayList<>();
 
                 if (response.body()!=null) {
@@ -66,11 +63,10 @@ public class Parser {
     }
 
     public static void getForksList(String name, String repoName, final Listener<Forks>listener){
-        Call<List<Forks>> call = MainApplication.getApiInterface().getForks(name, repoName,"token fe90f925ed7ab0254e9c767e8406139a83b3d3aa");
+        Call<List<Forks>> call = MainApplication.getApiInterface().getForks(name, repoName,"token OAUTH_TOKEN");
         call.enqueue(new Callback<List<Forks>>() {
             @Override
             public void onResponse(Call<List<Forks>> call, Response<List<Forks>> response) {
-                Log.e("RESP", response.body() + " ");
                 List<Forks> models = new ArrayList<>();
 
                 if (response.body()!=null) {
@@ -97,53 +93,19 @@ public class Parser {
             @Override
             public void onFailure(Call<List<Forks>> call, Throwable t) {
                 listener.onDataReceive(null);
-
                 Log.e("ERRO", t.getMessage());
-
             }
         });
     }
-
-
-    public static void getForks(String repoName, String username, final NumberListener listener){
-
-        Call<List<Forks>> call2 = MainApplication.getApiInterface().getForks(username, repoName, "token fe90f925ed7ab0254e9c767e8406139a83b3d3aa");
-        Log.e("CALL", call2.request()+" ");
-        call2.enqueue(new Callback<List<Forks>>() {
-            @Override
-            public void onResponse(Call<List<Forks>> call, Response<List<Forks>> response) {
-                if(response.body()!=null) {
-                    forks = response.body();
-                    Log.e("FORKS", forks.size() + "");
-                    listener.onDataReceived(forks.size());
-                }else{
-                    Log.e("ELSE", "in else");
-                    listener.onDataReceived(0);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Forks>> call, Throwable t) {
-                Log.e("ERRORFORKS", t.getMessage());
-
-                listener.onDataReceived(0);
-
-
-            }
-        });
-    }
-
 
     public static void getStargazersForRepo(String repoName, String username, final NumberListener listener){
 
-        Call<List<Stargazers>> call2 = MainApplication.getApiInterface().getStargazers(username, repoName, "token fe90f925ed7ab0254e9c767e8406139a83b3d3aa");
-//        Log.e("CALL", call2.request()+" "+repositories.get(i).fullName);
+        Call<List<Stargazers>> call2 = MainApplication.getApiInterface().getStargazers(username, repoName, "token OAUTH_TOKEN");
         call2.enqueue(new Callback<List<Stargazers>>() {
             @Override
             public void onResponse(Call<List<Stargazers>> call, Response<List<Stargazers>> response) {
                 if(response.body()!=null) {
                     stargazers = response.body();
-                    Log.e("FORKS", stargazers.size() + "");
                     listener.onDataReceived(stargazers.size());
                 }else{
                     listener.onDataReceived(0);
@@ -153,7 +115,6 @@ public class Parser {
             @Override
             public void onFailure(Call<List<Stargazers>> call, Throwable t) {
                 Log.e("ERRORFORKS", t.getMessage());
-
             }
         });
     }
